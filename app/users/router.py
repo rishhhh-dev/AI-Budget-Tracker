@@ -1,4 +1,5 @@
 from fastapi import APIRouter,Depends,HTTPException,status
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from typing import List
 from ..utils.database import *
@@ -35,13 +36,15 @@ def create_user(request:UserRequest,db:Session=Depends(get_db)):
     return {'detail':"User created"}
 
 @router.post('/login',status_code=status.HTTP_200_OK)
-def login(request:LoginRequest,db:Session=Depends(get_db)):
-    user = db.query(models.Users).filter(models.Users.email == request.email).first()
+def login(request:OAuth2PasswordRequestForm = Depends(),db:Session=Depends(get_db)):
+    email = request.username
+    password = request.password
+    user = db.query(models.Users).filter(models.Users.email == email).first()
 
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Invalid Credentials')
     
-    if not Hash.verify_password(request.password,user.password):
+    if not Hash.verify_password(password,user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,detail='Invalid Password')
 
     get_token = db.query(models.RefreshToken).filter(models.RefreshToken.user_id == user.id).first()
@@ -55,7 +58,7 @@ def login(request:LoginRequest,db:Session=Depends(get_db)):
         data.update({"refresh_id":new_refresh_token['refresh_id']})
         new_acccess_token = generate_access_token(data,db)
     else:
-        data = {"refresh_id":get_token.refresh_id}
+        data.update({"refresh_id":get_token.id})
         new_acccess_token = generate_access_token(data,db)
 
-    return {"access_token":new_acccess_token,"token_type":"bearer"}
+    return {"access_token":new_acccess_token['access'],"token_type":"bearer"}
