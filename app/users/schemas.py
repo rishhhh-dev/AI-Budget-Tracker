@@ -1,11 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel,EmailStr
 from typing import List,Optional
 
 
 class UserRequest(BaseModel):
     firstname: str
     lastname: str
-    email: str
+    email: EmailStr
     password: str
 
     class Config():
@@ -15,7 +15,7 @@ class UserResponse(BaseModel):
     id: int
     firstname: str
     lastname: str
-    email: str
+    email: EmailStr
 
     class Config():
         orm_mode=True
