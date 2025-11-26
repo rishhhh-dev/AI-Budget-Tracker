@@ -131,8 +131,8 @@ class BudgetRule(Base):
     id = Column(Integer,primary_key=True,index=True)
     name = Column(String(250),nullable=False,unique=True)
 
-    expense_percent = Column(Integer,nullable=False)
-    income_percent = Column(Integer,nullable=False)
+    needs_percent = Column(Integer,nullable=False)
+    wants_percent = Column(Integer,nullable=False)
     saving_percent = Column(Integer,nullable=False)
     created_at = Column(DateTime,default=datetime.now())
 
