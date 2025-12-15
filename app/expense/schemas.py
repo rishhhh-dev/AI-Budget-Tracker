@@ -9,7 +9,7 @@ class ExpenseRequest(BaseModel):
     name: str
     amount: float
     remark: Optional[str] = None
-    category_id : int
+    category_name : str
 
     class Config():
         orm_mode=True

@@ -60,7 +60,7 @@ def expense_list(id:int,db:Session=Depends(get_db)):
 @router.post('/create',status_code=status.HTTP_201_CREATED)
 def create_expense(request:ExpenseRequest,db:Session=Depends(get_db),current_user=Depends(get_current_user)):
 
-    get_category = db.query(models.Category).filter(models.Category.id == request.category_id).first()
+    get_category = db.query(models.Category).filter(models.Category.name == request.category_name).first()
     
     if not get_category:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail='No category found')
